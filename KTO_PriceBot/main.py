@@ -28,6 +28,7 @@ class Slash():
 @bot.event
 async def on_ready():
     await bot.wait_until_ready()
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="KTO Price (USD)"))
     
     
 if __name__ == '__main__':
