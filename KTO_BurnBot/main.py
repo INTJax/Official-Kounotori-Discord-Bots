@@ -26,7 +26,7 @@ class Slash():
 @bot.event
 async def on_ready():
     await bot.wait_until_ready()
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="KTO Price (USD)"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="KTO Burn Wallet"))
 
 if __name__ == '__main__':
     for file in os.listdir(cwd + "/cogs"):

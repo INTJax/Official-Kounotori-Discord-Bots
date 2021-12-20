@@ -4,7 +4,7 @@ from discord.ext import tasks
 from discord import Intents, Guild
 from services import kounotori
 
-OLD_PRICE = None
+OLD_Amount = None
 
 class Commands(Cog):
     def __init__(self, bot):
@@ -17,16 +17,16 @@ class Commands(Cog):
 
     @tasks.loop(seconds=60)
     async def change_status(self):
-        global OLD_PRICE
-        TokenPrice = await kounotori.getPrice()
-        if TokenPrice != OLD_PRICE:
-            print(f"Price has just updated ${TokenPrice}")
+        global OLD_Amount
+        Amount = await kounotori.getBurntKTO()
+        if Amount != OLD_Amount:
+            print(f"Number of burnt tokens has changed ${Amount}")
             guild = self.bot.get_guild(893600091686981722)
-            namechange = guild.get_member(user_id=916555063823044619)
-            await namechange.edit(nick=TokenPrice)
-            OLD_PRICE = TokenPrice
+            namechange = guild.get_member(user_id=922019937902542858)
+            await namechange.edit(nick=Amount)
+            OLD_Amount = Amount
         else:
-            print(f"Price hasn't been updated")
+            print(f"Amount hasn't changed")
 
 def setup(bot):
     bot.add_cog(Commands(bot))
