@@ -1,7 +1,6 @@
 import decimal
 
 async def getHolders():
-        with open('C:\Delivery\Scripts\KTO_HoldersBot\Holders.txt') as f:
+        with open('//DOMCON_1/KTO_Data/KTO_Holders.txt') as f:
                 holders = f.readline().rstrip()
-        print('TOKEN HOLDERS: ', holders)
         return holders

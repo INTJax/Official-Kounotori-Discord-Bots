@@ -15,7 +15,7 @@ class Commands(Cog):
         self.change_status.start()
         print("Commands Cog loaded.")
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=10)
     async def change_status(self):
         global OLD_HOLDERS
         TokenHolders = await kounotori.getHolders()
