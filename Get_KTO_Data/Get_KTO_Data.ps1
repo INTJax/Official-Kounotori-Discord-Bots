@@ -12,7 +12,7 @@ $BurnWallet = "0x000000000000000000000000000000000000dead"
 $EScanAPIKey = "%ETHERSCAN API KEY%"
 $Token = "kounotori"
 #$PriceURL = "https://api.coingecko.com/api/v3/simple/price?ids=$($Token)&vs_currencies=usd"
-$CGURL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=kounotori&order=market_cap_desc&per_page=100&page=1&sparkline=false"
+$CGURL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=$($Token)&order=market_cap_desc&per_page=100&page=1&sparkline=false"
 $BurnURL = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=$($KTOContract)&address=$($BurnWallet)&tag=latest&apikey=$($EScanAPIKey)"
 $HoldersURL = "https://etherscan.io/token/$($KTOContract)"
 
