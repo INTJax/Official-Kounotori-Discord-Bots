@@ -9,9 +9,8 @@ $Errors = 0
 [double]$TotalSupply = 1000000000000000
 $KTOContract = "0x616ef40D55C0D2c506f4d6873Bda8090b79BF8fC"
 $BurnWallet = "0x000000000000000000000000000000000000dead"
-$EScanAPIKey = "%ETHERSCAN API KEY%"
+$EScanAPIKey = (Get-Content "$Root\Etherscan.txt")
 $Token = "kounotori"
-#$PriceURL = "https://api.coingecko.com/api/v3/simple/price?ids=$($Token)&vs_currencies=usd"
 $CGURL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=$($Token)&order=market_cap_desc&per_page=100&page=1&sparkline=false"
 $BurnURL = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=$($KTOContract)&address=$($BurnWallet)&tag=latest&apikey=$($EScanAPIKey)"
 $HoldersURL = "https://etherscan.io/token/$($KTOContract)"
@@ -24,7 +23,7 @@ $EmailServer = "HOST"
 
 #Email Credentials
 $EmailUser = "EMAIL USER"
-$EmailPassFile = "$Root\EmailPass.txt"
+$EmailPassFile = "$Root\Email.txt"
 [securestring]$EmailPass = ConvertTo-SecureString (Get-Content $EmailPassFile) -AsPlainText -Force
 [pscredential]$EmailCredentials = (New-Object System.Management.Automation.PSCredential ($EmailUser, $EmailPass))
 

@@ -7,16 +7,16 @@ import logging
 
 #Set up logging
 LogName = 'DiscBot.log'
-LogMode = 'a' # r = read only; w = truncate then write; x = create only; a = append; b = binary mode; t = text mode (default); + update;
+LogMode = 'a' # r = read only; w = truncate then write; x = create only; a = append; b = binary mode; t = text mode (default); + = update;
 LogFormat = '%(asctime)s %(name)s %(levelname)s %(message)s'
 LogDateFormat = '%Y-%m-%d %H:%M:%S'
 LogLevel = logging.INFO
 logging.basicConfig(
-    filename=LogName,
-    filemode=LogMode,
-    format=LogFormat,
-    datefmt=LogDateFormat,
-    level=LogLevel
+    filename = LogName,
+    filemode = LogMode,
+    format = LogFormat,
+    datefmt = LogDateFormat,
+    level = LogLevel
 )
 logging.info("********** STARTING NEW INSTANCE **********")
 
@@ -24,8 +24,9 @@ logging.info("********** STARTING NEW INSTANCE **********")
 Prefix = '$'
 Description = 'Official KTO Price Bot'
 Intents = discord.Intents.default()
-Delay = 10
+Delay = 8 #Setting this any higher can cause issues with Discord heartbeat
 OldAmount = None
+UseDollar = False
 
 #Set activity variables
 ActivityType = discord.ActivityType.watching
@@ -64,9 +65,9 @@ async def updateNickname(Amount):
 
 #Function to update the nickname on one server (to ensure new servers perform a quick initial update)
 async def updateOneNickname(Amount,DiscGuild):
-        logging.info("Updating nickname on %s", DiscGuild)
-        await (DiscGuild.get_member(user_id=DiscBot.user.id)).edit(nick=Amount)
-        logging.info("Updated nickname to %s", Amount)
+    logging.info("Updating nickname on %s", DiscGuild)
+    await (DiscGuild.get_member(user_id=DiscBot.user.id)).edit(nick=Amount)
+    logging.info("Updated nickname to %s", Amount)
 
 #Function to check that the nickname in all servers is set appropriately
 async def checkNickname(Amount):
@@ -81,6 +82,9 @@ async def checkNickname(Amount):
 #Main function that controls the frequency of retrieving data and updating nicknames
 async def loop():
     Amount = await getKTOData()
+    global UseDollar
+    if UseDollar:
+        Amount = "$" + Amount
     global OldAmount
     if Amount != OldAmount:
         logging.info("Amount has changed to %s", Amount)
@@ -98,7 +102,7 @@ async def on_ready():
     await DiscBot.wait_until_ready()
     logging.info("Logged in as %s", DiscBot.user)
     logging.info("My user ID is %s", DiscBot.user.id)
-    await DiscBot.change_presence(activity=Activity)
+    await DiscBot.change_presence(activity = Activity)
     logging.info("Activity set to %s", Activity)
     logging.info("Starting loop")
     while True:

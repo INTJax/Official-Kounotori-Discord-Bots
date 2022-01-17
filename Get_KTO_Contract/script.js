@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const ethers = require("ethers");
-const fs = require('fs');
+var fs = require('fs');
+let Count = 0;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -8,14 +9,13 @@ function sleep(ms) {
 
 async function main() {
 
-    // specify the deployed contract address, etherscan apikey, private key, ETH node address, output file location, expected tax format and loop frequency
+    // specifying the deployed contract address, etherscan apikey, private key, ETH node address and output file location
     const contractaddress = "0x616ef40D55C0D2c506f4d6873Bda8090b79BF8fC";
-    const apikey = "EHTERSCAN API KEY";
-    const privatekey = "WALLET RIVATE KEY";
-    const node = "ETH NODE";
+    const apikey = (fs.readFileSync(".\\Etherscan.txt"));
+    const privatekey = (fs.readFileSync(".\\Wallet.txt"));
+    const node = encodeURI(fs.readFileSync(".\\Node.txt"));
     const OutPath = "\\\\domcon_1\\KTO_Data";
     const Regex = new RegExp('\\d{1,3},\\d{1,3},\\d{1,3}');
-    const Delay = 60000 // milliseconds
 
     while(1) {
         try {
@@ -80,49 +80,42 @@ async function main() {
                 fs.writeFile(OutPath + "\\KTO_Tax.txt", BuyTax + "% | " + SellTax + "% | " + TferTax + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
+
                 // write out additional tax data
                 fs.writeFile(OutPath + "\\Tax_Details\\BuyReflect.txt", BuyReflect + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\BuyLTax.txt", BuyLTax + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\BuyMTax.txt", BuyMTax + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\SellReflect.txt", SellReflect + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\SellLTax.txt", SellLTax + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\SellMTax.txt", SellMTax + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\TferReflect.txt", TferReflect + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\TferLTax.txt", TferLTax + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
                 fs.writeFile(OutPath + "\\Tax_Details\\TferMTax.txt", TferMTax + "%" , function (err) {
                     if (err) throw err;
                 });
-                fs.close()
             }
             else {
                 console.log("ERROR: Taxes are not correct!")
             }
-            await sleep(Delay);
+            await sleep(60000);
+            //Count += 1
+            //console.log("Count = " + Count.toString())
         }
         catch(e) {
             console.log(e);
