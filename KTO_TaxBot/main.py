@@ -133,20 +133,21 @@ async def checkNickname(Amount):
 
 #Main function that controls the frequency of retrieving data and updating nicknames
 async def loop():
-    Amount = await getKTOData()
-    global UseDollar
-    if UseDollar:
-        Amount = "$" + Amount
-    global OldAmount
-    if Amount != OldAmount:
-        logging.info("Amount has changed to %s", Amount)
-        await updateNickname(Amount)
-        OldAmount = Amount
-    else:
-        logging.debug("Amount has not changed")
-        await checkNickname(Amount)
-    global Delay
-    await asyncio.sleep(Delay)
+    while True:
+        Amount = await getKTOData()
+        global UseDollar
+        if UseDollar:
+            Amount = "$" + Amount
+        global OldAmount
+        if Amount != OldAmount:
+            logging.info("Amount has changed to %s", Amount)
+            await updateNickname(Amount)
+            OldAmount = Amount
+        else:
+            logging.debug("Amount has not changed")
+            await checkNickname(Amount)
+        global Delay
+        await asyncio.sleep(Delay)
 
 #Set the bot's activity and initiate the main loop
 @DiscBot.event
@@ -157,7 +158,6 @@ async def on_ready():
     await DiscBot.change_presence(activity = Activity)
     logging.info("Activity set to %s", Activity)
     logging.info("Starting loop")
-    while True:
-        await loop()
+    DiscBot.loop.create_task(loop())
 
 DiscBot.run(Token)
