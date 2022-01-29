@@ -1,9 +1,10 @@
 #Import required components
-import discord
-from discord.ext.commands import Bot
-from discord_slash import SlashCommand, SlashContext
 import asyncio
 import logging
+import discord
+from discord.ext.commands import Bot, has_permissions, MissingPermissions
+from discord.commands import Option
+import time
 
 #Set up logging
 LogName = 'DiscBot.log'
@@ -44,14 +45,82 @@ with open(OauthSource) as f:
  
 #Instantiate the bot
 DiscBot = Bot(command_prefix=Prefix, description=Description, intents=Intents)
-Slash = SlashCommand(DiscBot, sync_commands=True)
+
+#Define the "/GetTimestamp" command
+@DiscBot.slash_command(
+    name="timestamp",
+    description="Returns a local timestamp, relative to the user viewing it.",
+    guild_ids=[
+        929292090385522708
+    ]
+)
+@has_permissions(administrator=True)
+async def Timestamp(
+    ctx,
+    inputtime: Option(str, 'Format: dd.mm.yyyy.HH.MM.SS', required=True, default=None),
+    outformat: Option(str, 'Format to output (default: Short Date/Time)', required=True, default=None,
+                    choices=(
+                        'Short Time (HH:MM)',
+                        'Long Time (HH:MM:SS)',
+                        'Short Date (dd/mm/yyyy)',
+                        'Long Date (dd month yyyy)',
+                        'Short Date/Time (dd month yyyy HH:MM)',
+                        'Long Date/Time (day, dd month yyyy HH:MM)',
+                        'Relative Time (X time ago/from now)'
+                    )
+                )
+):
+    logging.info("Starting Timestamp function...")
+    if inputtime == None:
+        await ctx.respond("No inputtime provided! Please try again.")
+    else:
+        date_time=inputtime
+        pattern='%d.%m.%Y.%H.%M.%S'
+        match outformat:
+            case 'Short Time (HH:MM)':
+                format='t'
+            case 'Long Time (HH:MM:SS)':
+                format='T'
+            case 'Short Date (dd/mm/yyyy)':
+                format='d'
+            case 'Long Date (dd month yyyy)':
+                format='D'
+            case 'Short Date/Time (dd month yyyy HH:MM)':
+                format='f'
+            case 'Long Date/Time (day, dd month yyyy HH:MM)':
+                format='F'
+            case 'Relative Time (X time ago/from now)':
+                format='R'
+        try:
+            EpochTime=int(time.mktime(time.strptime(date_time, pattern)))
+            await ctx.respond(f"The time code for {date_time} is below.\n\\<t:" + str(EpochTime) + ":" + format + ">")
+            logging.info("Timestamp executed successfully!")
+        except Exception as e:
+            logging.warning(e)
+            await ctx.respond("Incorrect datetime format! Please try again.")
+@Timestamp.error
+async def GetTimestamp_Error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        BotError=discord.Embed(
+            title="Permission Denied!",
+            description="You do not have sufficient permissions to run that command!",
+            color=0xff7573
+        )
+    else:
+        BotError=discord.Embed(
+            title="Application Error!",
+            description="The application encountered an error and could not complete the command.",
+            color=0xff7573
+        )
+        logging.error(error)
+    await ctx.respond(embed=BotError)
 
 #Define the "/tax" command
-@Slash.slash(
+@DiscBot.slash_command(
     name="tax",
     description="Returns a breakdown of current KTO tax rates."
 )
-async def _tax(ctx:SlashContext):
+async def tax(ctx):
     #Load the data
     with open('//DOMCON_1/KTO_Data/Tax_Details/BuyMTax.txt') as f:
         BuyMTax = f.readline().rstrip()
@@ -96,7 +165,7 @@ async def _tax(ctx:SlashContext):
         text="Requested by: {}".format(ctx.author.display_name)
     )
     #Send the embed
-    await ctx.send(embed=TaxDetail)
+    await ctx.respond(embed=TaxDetail)
 
 #Function to retrieve the required KTO data
 async def getKTOData():
@@ -111,14 +180,14 @@ async def updateNickname(Amount):
     logging.info("Updating ALL nicknames to %s", Amount)
     async for guild in DiscBot.fetch_guilds(limit=100):
         DiscGuild = DiscBot.get_guild(guild.id)
-        await (DiscGuild.get_member(user_id=DiscBot.user.id)).edit(nick=Amount)
+        await (DiscGuild.get_member(DiscBot.user.id)).edit(nick=Amount)
         logging.info("Updated nickname for server %s", DiscGuild)
     logging.info("Updated ALL nicknames")
 
 #Function to update the nickname on one server (to ensure new servers perform a quick initial update)
 async def updateOneNickname(Amount,DiscGuild):
     logging.info("Updating nickname on %s", DiscGuild)
-    await (DiscGuild.get_member(user_id=DiscBot.user.id)).edit(nick=Amount)
+    await (DiscGuild.get_member(DiscBot.user.id)).edit(nick=Amount)
     logging.info("Updated nickname to %s", Amount)
 
 #Function to check that the nickname in all servers is set appropriately
@@ -126,7 +195,7 @@ async def checkNickname(Amount):
     logging.debug("Checking nicknames on ALL servers")
     async for guild in DiscBot.fetch_guilds(limit=100):
         DiscGuild = DiscBot.get_guild(guild.id)
-        CurrentNick = (DiscGuild.get_member(user_id=DiscBot.user.id)).nick
+        CurrentNick = (DiscGuild.get_member(DiscBot.user.id)).nick
         if CurrentNick != Amount:
             logging.info("Nickname in server %s is not correct", DiscGuild)
             await updateOneNickname(Amount,DiscGuild)
