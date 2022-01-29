@@ -51,7 +51,7 @@ DiscBot = Bot(command_prefix=Prefix, description=Description, intents=Intents)
     name="timestamp",
     description="Returns a local timestamp, relative to the user viewing it.",
     guild_ids=[
-        929292090385522708
+        893600091686981722
     ]
 )
 @has_permissions(administrator=True)
