@@ -97,7 +97,7 @@ async def Timestamp(
             logging.info("Timestamp executed successfully!")
         except Exception as e:
             logging.warning(e)
-            await ctx.respond("Incorrect datetime format! Please try again.")
+            await ctx.respond("Incorrect datetime format! Please try again.", ephemeral=True)
 @Timestamp.error
 async def GetTimestamp_Error(ctx, error):
     if isinstance(error, MissingPermissions):
@@ -113,7 +113,7 @@ async def GetTimestamp_Error(ctx, error):
             color=0xff7573
         )
         logging.error(error)
-    await ctx.respond(embed=BotError)
+    await ctx.respond(embed=BotError, ephemeral=True)
 
 #Define the "/tax" command
 @DiscBot.slash_command(
