@@ -16,13 +16,13 @@ $BurnURL = "https://api.etherscan.io/api?module=account&action=tokenbalance&cont
 $HoldersURL = "https://etherscan.io/token/$($KTOContract)"
 
 #Email Variables
-$EmailFrom = "SMTP SERVER"
+$EmailFrom = "alerts@schrader.home"
 $EmailSubject = "KTO DATA FETCH ERROR"
-$EmailTo = "RECIPIENT"
-$EmailServer = "HOST"
+$EmailTo = "intjaxau@gmail.com"
+$EmailServer = "JS-HOST"
 
 #Email Credentials
-$EmailUser = "EMAIL USER"
+$EmailUser = "alerts@schrader.home"
 $EmailPassFile = "$Root\Email.txt"
 [securestring]$EmailPass = ConvertTo-SecureString (Get-Content $EmailPassFile) -AsPlainText -Force
 [pscredential]$EmailCredentials = (New-Object System.Management.Automation.PSCredential ($EmailUser, $EmailPass))
@@ -30,7 +30,7 @@ $EmailPassFile = "$Root\Email.txt"
 #Update data every 60 seconds and send email if there is an error
 While($true) {
     #Get KTO Price & Volume
-    $CGResponse = Invoke-WebRequest $CGURL
+    $CGResponse = Invoke-WebRequest $CGURL -UseBasicParsing
     if($CGResponse.StatusCode -eq 200) {
         $CGData = ((Invoke-WebRequest $CGURL).content | ConvertFrom-Json)
         [decimal]$Price = (($CGData.current_price) -as [decimal])
