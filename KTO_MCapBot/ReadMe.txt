@@ -1,0 +1,1 @@
+Be sure to fill in the variables in "env.txt" and then rename it to ".env"

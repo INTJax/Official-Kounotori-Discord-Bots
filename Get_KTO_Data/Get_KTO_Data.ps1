@@ -15,14 +15,14 @@ $CGURL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=$($
 $BurnURL = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=$($KTOContract)&address=$($BurnWallet)&tag=latest&apikey=$($EScanAPIKey)"
 $HoldersURL = "https://etherscan.io/token/$($KTOContract)"
 
-#Email Variables
-$EmailFrom = "alerts@schrader.home"
+#Email Variables - FILL THESE IN
+$EmailFrom = "FROM_ADDRESS"
 $EmailSubject = "KTO DATA FETCH ERROR"
-$EmailTo = "intjaxau@gmail.com"
-$EmailServer = "JS-HOST"
+$EmailTo = "TO_ADDRESS"
+$EmailServer = "SMTP_SERVER"
 
 #Email Credentials
-$EmailUser = "alerts@schrader.home"
+$EmailUser = "EMAIL" # FILL THIS IN
 $EmailPassFile = "$Root\Email.txt"
 [securestring]$EmailPass = ConvertTo-SecureString (Get-Content $EmailPassFile) -AsPlainText -Force
 [pscredential]$EmailCredentials = (New-Object System.Management.Automation.PSCredential ($EmailUser, $EmailPass))
